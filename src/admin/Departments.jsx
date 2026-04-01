@@ -1,18 +1,15 @@
 import React, { useState, useContext, useMemo } from "react";
-import { AdminContextAPI } from "../context/AdminContext";
+import { AppContextAPI } from "../context/AppContext";
 
 export default function Departments({ campus, onSelect, onBack }) {
-  const { departments, addDepartment } = useContext(AdminContextAPI);
-
+  const { departments, addDepartment } = useContext(AppContextAPI);
   const [showAddModal, setShowAddModal] = useState(false);
   const [name, setName] = useState("");
 
-  // 🔥 Filter departments by selected campus
   const filteredDepartments = useMemo(() => {
     return departments.filter((d) => d.campusId?._id === campus._id);
   }, [departments, campus]);
 
-  // ➕ Add department
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -29,15 +26,10 @@ export default function Departments({ campus, onSelect, onBack }) {
 
   return (
     <div>
-      {/* 🔙 Back Button */}
       <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded">
         ← Back
       </button>
-
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-4">Departments - {campus.name}</h1>
-
-      {/* ➕ Add Button */}
       <button
         className="mb-4 px-4 py-2 bg-brand text-white rounded hover:bg-brand-strong"
         onClick={() => setShowAddModal(true)}
@@ -45,10 +37,9 @@ export default function Departments({ campus, onSelect, onBack }) {
         Add Department
       </button>
 
-      {/* Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-background/70 flex items-center justify-center">
-          <div className="bg-card border p-6 rounded-lg w-96">
+          <div className="bg-card border border-border p-6 rounded-lg w-96">
             <h2 className="text-xl font-bold mb-4">
               Add Department to {campus.name}
             </h2>
@@ -84,7 +75,6 @@ export default function Departments({ campus, onSelect, onBack }) {
         </div>
       )}
 
-      {/* 📋 List */}
       <ul>
         {filteredDepartments.length === 0 ? (
           <p className="text-gray-500">No departments found</p>

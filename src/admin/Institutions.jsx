@@ -1,57 +1,30 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useContext, useState } from "react";
 import { Landmark } from "lucide-react";
+import { AppContextAPI } from "../context/AppContext";
 
 export default function Institutions({ onSelect }) {
-  const [institutions, setInstitutions] = useState([]);
+  const { institutions, loading, addInstitution } = useContext(AppContextAPI);
   const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  // 🔄 Fetch institutions
-  const fetchInstitutions = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:3000/api/admin/institutions",
-      );
-      setInstitutions(res.data);
-    } catch (err) {
-      console.error("Error fetching institutions:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchInstitutions();
-  }, []);
-
-  // ➕ Add institution
-  const handleAddInstitution = async () => {
-    if (!name.trim()) return;
-
-    try {
-      setLoading(true);
-      await axios.post("http://localhost:3000/api/admin/add-institutions", {name});
-      setName("");
-      fetchInstitutions(); // refresh list
-    } catch (err) {
-      console.error("Error adding institution:", err);
-    } finally {
-      setLoading(false);
-    }
+  const handleAddInstitution = async (e) => {
+     e.preventDefault();
+     const result = await addInstitution({name});
+     if (result.success) {
+       setName("");
+     }
   };
 
   return (
     <div>
-      {/* Header */}
       <h1 className="text-2xl font-bold mb-4">Institutions</h1>
 
-      {/* ➕ Add Form */}
       <div className="flex gap-2 mb-6">
         <input
           type="text"
           placeholder="Enter institution name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="border px-3 py-2 rounded w-full"
+          className="border border-border px-3 py-2 rounded-base"
         />
 
         <button
@@ -63,19 +36,20 @@ export default function Institutions({ onSelect }) {
         </button>
       </div>
 
-      {/* 📋 List */}
-      <div className="space-y-3">
+      <div className="space-y-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {institutions.length === 0 ? (
           <p className="text-gray-500">No institutions found</p>
         ) : (
           institutions.map((inst) => (
             <button
               key={inst._id}
-              onClick={() => onSelect(inst)} // 🔥 IMPORTANT
-              className="flex items-center gap-3 border p-4 rounded w-full hover:bg-gray-100 transition"
+              onClick={() => onSelect(inst)}
+              className="bg-card block max-w-sm p-6 border border-default rounded-base shadow-xs cursor-pointer hover:shadow-lg transition-shadow text-left"
             >
-              <Landmark />
-              <span className="font-medium">{inst.name}</span>
+              <Landmark className="text-brand" />
+              <span className="py-3 text-2xl font-semibold tracking-tight text-heading">
+                {inst.name}
+              </span>
             </button>
           ))
         )}
