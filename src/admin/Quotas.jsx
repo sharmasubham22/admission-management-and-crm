@@ -1,20 +1,23 @@
 import React, { useContext, useState, useMemo } from "react";
-import { AdminContextAPI } from "../context/AdminContext";
+import { AppContextAPI } from "../context/AppContext";
 
 export default function Quotas({ program, onBack }) {
-  const { quotas, addQuota } = useContext(AdminContextAPI);
+  const { quotas, addQuota } = useContext(AppContextAPI);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [kcet, setKcet] = useState("");
   const [comedk, setComedk] = useState("");
   const [management, setManagement] = useState("");
+  const [filledKcet, setFilledKcet] = useState(0);
+  const [filledComedk, setFilledComedk] = useState(0);
+  const [filledManagement, setFilledManagement] = useState(0);
 
-  // 🔥 Filter quotas for selected program
   const programQuotas = useMemo(() => {
     return quotas.filter((q) => q.programId?._id === program._id);
   }, [quotas, program]);
 
-  // 🔢 Convert to numbers
+  const quotaExists = programQuotas.length > 0;
+
   const kcetNum = Number(kcet || 0);
   const comedkNum = Number(comedk || 0);
   const managementNum = Number(management || 0);
@@ -24,16 +27,17 @@ export default function Quotas({ program, onBack }) {
 
   const isValid = quotaSum === intake;
 
-  // ➕ Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const result = await addQuota({
       programId: program._id,
       kcet: kcetNum,
+      filledKcet,
       comedk: comedkNum,
+      filledComedk,
       management: managementNum,
-      intake,
+      filledManagement,
+      totalSeats: intake,
     });
 
     if (result.success) {
@@ -41,25 +45,46 @@ export default function Quotas({ program, onBack }) {
       setComedk("");
       setManagement("");
       setShowAddModal(false);
+      setFilledKcet(0);
+      setFilledComedk(0);
+      setFilledManagement(0);
     }
   };
 
   return (
     <div>
-      {/* 🔙 Back */}
-      <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded">
+      <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded-base">
         ← Back
       </button>
-
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-4">Quotas - {program.name}</h1>
 
-      {/* ➕ Add Button */}
+      {quotaExists && (
+        <div className="mb-4 p-4 border rounded bg-gray-100">
+          <h2 className="font-semibold mb-2">Existing Quota</h2>
+          <p>
+            <strong>KCET:</strong> {programQuotas[0].kcet}
+          </p>
+          <p>
+            <strong>COMEDK:</strong> {programQuotas[0].comedk}
+          </p>
+          <p>
+            <strong>Management:</strong> {programQuotas[0].management}
+          </p>
+        </div>
+      )}
+
       <button
         onClick={() => setShowAddModal(true)}
-        className="mb-4 px-4 py-2 bg-brand text-white rounded"
+        disabled={quotaExists}
+        className={`mb-4 px-4 py-2 rounded-base text-white 
+          ${
+            quotaExists
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-brand hover:bg-brand-strong"
+          }
+        `}
       >
-        Add Quota
+        {quotaExists ? "Quota Already Added" : "Add Quota"}
       </button>
 
       {/* Modal */}
@@ -140,11 +165,7 @@ export default function Quotas({ program, onBack }) {
         {programQuotas.length === 0 ? (
           <p className="text-gray-500">No quotas found</p>
         ) : (
-          programQuotas.map((q) => (
-            <li key={q._id} className="p-3 border rounded mb-2">
-              KCET: {q.kcet} | COMEDK: {q.comedk} | Management: {q.management}
-            </li>
-          ))
+          ''
         )}
       </ul>
     </div>

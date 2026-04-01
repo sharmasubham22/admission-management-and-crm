@@ -1,8 +1,8 @@
 import React, { useContext, useState, useMemo } from "react";
-import { AdminContextAPI } from "../context/AdminContext";
+import { AppContextAPI } from "../context/AppContext";
 
 export default function Programs({ department, onSelect, onBack }) {
-  const { programs, addProgram } = useContext(AdminContextAPI);
+  const { programs, addProgram } = useContext(AppContextAPI);
 
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -12,12 +12,10 @@ export default function Programs({ department, onSelect, onBack }) {
   const [courseType, setCourseType] = useState("");
   const [entryType, setEntryType] = useState("");
 
-  // 🔥 Filter programs by department
   const filteredPrograms = useMemo(() => {
     return programs.filter((p) => p.departmentId?._id === department._id);
   }, [programs, department]);
 
-  // ➕ Add program
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -42,26 +40,20 @@ export default function Programs({ department, onSelect, onBack }) {
 
   return (
     <div>
-      {/* 🔙 Back */}
       <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded">
         ← Back
       </button>
-
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-4">Programs - {department.name}</h1>
-
-      {/* ➕ Add Button */}
       <button
-        className="mb-4 px-4 py-2 bg-brand text-white rounded hover:bg-brand-strong"
+        className="mb-4 px-4 py-2 bg-brand text-white rounded-base hover:bg-brand-strong"
         onClick={() => setShowAddModal(true)}
       >
         Add Program
       </button>
 
-      {/* Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-background/70 flex items-center justify-center p-4">
-          <div className="bg-card border rounded-lg w-full max-w-md p-6">
+          <div className="bg-card border border-border rounded-lg w-full max-w-md p-6">
             <h2 className="text-xl font-bold mb-4">
               Add Program to {department.name}
             </h2>
@@ -140,7 +132,6 @@ export default function Programs({ department, onSelect, onBack }) {
         </div>
       )}
 
-      {/* 📋 List */}
       <ul>
         {filteredPrograms.length === 0 ? (
           <p className="text-gray-500">No programs found</p>

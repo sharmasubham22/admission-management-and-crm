@@ -9,12 +9,16 @@ const quotaSchema = new mongoose.Schema(
     },
 
     totalSeats: {
-      type: mongoose.Schema.Types.Number,
-      ref: "program",
+      type: Number,
       required: true,
     },
 
     kcet: {
+      type: Number,
+      default: 0,
+    },
+
+    filledKcet: {
       type: Number,
       default: 0,
     },
@@ -24,7 +28,17 @@ const quotaSchema = new mongoose.Schema(
       default: 0,
     },
 
+    filledComedk: {
+      type: Number,
+      default: 0,
+    },
+
     management: {
+      type: Number,
+      default: 0,
+    },
+
+    filledManagement: {
       type: Number,
       default: 0,
     },

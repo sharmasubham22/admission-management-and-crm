@@ -1,14 +1,15 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-export const AdminContextAPI = createContext();
+export const AppContextAPI = createContext();
 
-export function AdminProvider({ children }) {
+export function AppProvider({ children }) {
   const [institutions, setInstitutions] = useState([]);
   const [campuses, setCampuses] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [quotas, setQuotas] = useState([]);
+  const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -163,6 +164,70 @@ export function AdminProvider({ children }) {
     }
   };
 
+  // Add Applicant
+  const addApplicant = async (data) => {
+    try {
+      setError(null);
+      await axios.post("http://localhost:3000/api/applicant/add-applicant", data);
+      await fetchApplicants();
+      return { success: true };
+    } catch (err) {
+      console.error("Error adding applicant:", err);
+      setError(err.message);
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Fetch Applicants
+  const fetchApplicants = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.get("http://localhost:3000/api/applicant/applicants");
+      setApplicants(res.data);
+    } catch (err) {
+      console.error("Error fetching applicants:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch Applicant Details
+  const fetchApplicantDetails = async (id) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.get(`http://localhost:3000/api/applicant/applicant/${id}`);
+      return res.data;
+    } catch (err) {
+      console.error("Error fetching applicant details:", err);
+      setError(err.message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Allot Seat
+  const allotSeat = async (applicantId, programId, quotaType) => {
+    try {
+      setError(null);
+      const res = await axios.post("http://localhost:3000/api/applicant/allot-seat", {
+        applicantId,
+        programId,
+        quotaType,
+      });
+      await fetchApplicants(); // Refresh applicants list
+      await fetchQuotas(); // Refresh quotas
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("Error allotting seat:", err);
+      setError(err.response?.data?.message || err.message);
+      return { success: false, error: err.response?.data?.message || err.message };
+    }
+  };
+
   // Load data on mount
   useEffect(() => {
     fetchInstitutions();
@@ -170,6 +235,8 @@ export function AdminProvider({ children }) {
     fetchDepartments();
     fetchPrograms();
     fetchQuotas();
+    fetchApplicants();
+    fetchApplicantDetails();
   }, []);
 
   const value = {
@@ -178,6 +245,7 @@ export function AdminProvider({ children }) {
     departments,
     programs,
     quotas,
+    applicants,
     loading,
     error,
     addInstitution,
@@ -185,16 +253,20 @@ export function AdminProvider({ children }) {
     addDepartment,
     addProgram,
     addQuota,
+    addApplicant,
     fetchInstitutions,
     fetchCampuses,
     fetchDepartments,
     fetchPrograms,
     fetchQuotas,
+    fetchApplicants,
+    fetchApplicantDetails,
+    allotSeat,
   };
 
   return (
-    <AdminContextAPI.Provider value={value}>
+    <AppContextAPI.Provider value={value}>
       {children}
-    </AdminContextAPI.Provider>
+    </AppContextAPI.Provider>
   );
 }

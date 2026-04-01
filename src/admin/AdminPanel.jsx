@@ -29,7 +29,7 @@ export default function AdminPanel() {
       {/* Mobile toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="ms-3 mt-3 p-2 lg:hidden border rounded"
+        className="ms-3 mt-3 p-2 lg:hidden border border-border rounded"
       >
         <Menu />
       </button>
@@ -39,7 +39,7 @@ export default function AdminPanel() {
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform 
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
-        <div className="h-full px-3 py-4 bg-card border-e">
+        <div className="h-full px-3 py-4 bg-card border-e border-border">
           <h2 className="text-xl font-bold mb-5">Edumerge</h2>
 
           <ul className="space-y-2 text-lg">
@@ -54,7 +54,7 @@ export default function AdminPanel() {
                 className={`flex items-center w-full px-2 py-2 rounded-base ${
                   view === "dashboard"
                     ? "bg-brand hover:bg-brand-strong cursor-pointer text-white"
-                    : ""
+                    : "hover:bg-brand-softer cursor-pointer hover:text-white"
                 }`}
               >
                 <LayoutDashboard />
@@ -73,7 +73,7 @@ export default function AdminPanel() {
                 className={`flex items-center w-full px-2 py-2 rounded ${
                   view === "institutions"
                     ? "bg-brand hover:bg-brand-strong cursor-pointer text-white"
-                    : ""
+                    : "hover:bg-brand-softer cursor-pointer hover:text-white"
                 }`}
               >
                 <Landmark />
@@ -92,7 +92,7 @@ export default function AdminPanel() {
                 className={`flex items-center w-full px-2 py-2 rounded ${
                   view === "applicants"
                     ? "bg-brand hover:bg-brand-strong cursor-pointer text-white"
-                    : ""
+                    : "hover:bg-brand-softer cursor-pointer hover:text-white"
                 }`}
               >
                 <ContactRound />
