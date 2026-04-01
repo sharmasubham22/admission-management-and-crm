@@ -8,15 +8,25 @@ const quotaSchema = new mongoose.Schema(
       required: true,
     },
 
-    type: {
-      type: String,
-      enum: ["KCET", "COMEDK", "Management"],
+    totalSeats: {
+      type: mongoose.Schema.Types.Number,
+      ref: "program",
       required: true,
     },
 
-    totalSeats: {
+    kcet: {
       type: Number,
-      required: true,
+      default: 0,
+    },
+
+    comedk: {
+      type: Number,
+      default: 0,
+    },
+
+    management: {
+      type: Number,
+      default: 0,
     },
 
     filledSeats: {

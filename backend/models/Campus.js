@@ -7,7 +7,7 @@ const campusSchema = new mongoose.Schema({
   },
   institutionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "institutions",
+      ref: "institution",
       required: true,
     },
   date: {

@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import "flowbite/src/themes/default";
+
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+@theme {
+  --color-background: #faf9f7;
+  --color-card: #fff7eb;
+  --color-border: #ded9d1;
+
+  --color-brand-softer: #ffd391;
+  --color-brand-soft: #fcbb58;
+  --color-brand: #ff9b05;
+  --color-brand-medium: #fca623;
+  --color-brand-strong: #b56d00;
+
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+}
