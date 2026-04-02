@@ -87,7 +87,7 @@ const applicantSchema = new mongoose.Schema(
 
     admissionNumber: {
       type: String,
-      default: "Not generated"
+      required: false,
     },
 
     date: {

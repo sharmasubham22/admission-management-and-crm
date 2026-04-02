@@ -6,18 +6,26 @@ import cors from "cors";
 import connectToMongo from "./db.js";
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
-app.use(async (req, res, next) => {
-  await connectToMongo();
-  next();
-});
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // for testing
+  }),
+);
 app.use("/api/admin", admin);
 app.use("/api/applicant", applicant);
 app.use("/api/user", user);
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+connectToMongo()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Unable to start server due to DB connection error:", err.message);
+    process.exit(1);
+  });
+
