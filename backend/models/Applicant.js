@@ -1,5 +1,3 @@
-import { all } from "axios";
-import { Contact } from "lucide-react";
 import mongoose from "mongoose";
 
 const applicantSchema = new mongoose.Schema(
