@@ -62,7 +62,7 @@ export default function Programs({ department, onSelect, onBack }) {
               <input
                 type="text"
                 placeholder="Program Name"
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -71,14 +71,14 @@ export default function Programs({ department, onSelect, onBack }) {
               <input
                 type="number"
                 placeholder="Intake"
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={intake}
                 onChange={(e) => setIntake(e.target.value)}
                 required
               />
 
               <select
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={academicYear}
                 onChange={(e) => setAcademicYear(e.target.value)}
                 required
@@ -90,7 +90,7 @@ export default function Programs({ department, onSelect, onBack }) {
               </select>
 
               <select
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={courseType}
                 onChange={(e) => setCourseType(e.target.value)}
                 required
@@ -101,7 +101,7 @@ export default function Programs({ department, onSelect, onBack }) {
               </select>
 
               <select
-                className="w-full p-2 border rounded mb-4"
+                className="w-full p-2 border rounded-base mb-4"
                 value={entryType}
                 onChange={(e) => setEntryType(e.target.value)}
                 required
@@ -140,7 +140,7 @@ export default function Programs({ department, onSelect, onBack }) {
             <li
               key={program._id}
               onClick={() => onSelect(program)} // 🔥 IMPORTANT
-              className="p-3 border rounded mb-2 cursor-pointer hover:bg-gray-100"
+              className="p-3 border rounded-base mb-2 cursor-pointer hover:bg-gray-100"
             >
               <strong>{program.name}</strong> | Intake: {program.intake}
             </li>

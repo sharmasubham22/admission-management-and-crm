@@ -59,7 +59,7 @@ export default function Quotas({ program, onBack }) {
       <h1 className="text-3xl font-bold mb-4">Quotas - {program.name}</h1>
 
       {quotaExists && (
-        <div className="mb-4 p-4 border rounded bg-gray-100">
+        <div className="mb-4 p-4 border rounded-base bg-gray-100">
           <h2 className="font-semibold mb-2">Existing Quota</h2>
           <p>
             <strong>KCET:</strong> {programQuotas[0].kcet}
@@ -103,7 +103,7 @@ export default function Quotas({ program, onBack }) {
               <input
                 type="number"
                 placeholder="KCET"
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={kcet}
                 onChange={(e) => setKcet(e.target.value)}
                 required
@@ -112,7 +112,7 @@ export default function Quotas({ program, onBack }) {
               <input
                 type="number"
                 placeholder="COMEDK"
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={comedk}
                 onChange={(e) => setComedk(e.target.value)}
                 required
@@ -121,7 +121,7 @@ export default function Quotas({ program, onBack }) {
               <input
                 type="number"
                 placeholder="Management"
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded-base mb-3"
                 value={management}
                 onChange={(e) => setManagement(e.target.value)}
                 required
@@ -150,7 +150,7 @@ export default function Quotas({ program, onBack }) {
                 <button
                   type="submit"
                   disabled={!isValid}
-                  className="px-4 py-2 bg-brand text-white rounded disabled:opacity-50"
+                  className="px-4 py-2 bg-brand text-white rounded-base disabled:opacity-50"
                 >
                   Add
                 </button>

@@ -198,7 +198,7 @@ export function AppProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get(`http://localhost:3000/api/applicant/applicant/${id}`);
+      const res = await axios.get(`http://localhost:3000/api/applicant/applicant-details/${id}`);
       return res.data;
     } catch (err) {
       console.error("Error fetching applicant details:", err);
@@ -223,6 +223,22 @@ export function AppProvider({ children }) {
       return { success: true, data: res.data };
     } catch (err) {
       console.error("Error allotting seat:", err);
+      setError(err.response?.data?.message || err.message);
+      return { success: false, error: err.response?.data?.message || err.message };
+    }
+  };
+
+  // Update Document Status
+  const updateDocumentStatus = async (applicantId, documentStatus) => {
+    try {
+      setError(null);
+      const res = await axios.patch(`http://localhost:3000/api/applicant/update-doc-status/${applicantId}`, {
+        documentStatus,
+      });
+      await fetchApplicants();
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("Error updating document status:", err);
       setError(err.response?.data?.message || err.message);
       return { success: false, error: err.response?.data?.message || err.message };
     }
@@ -262,6 +278,7 @@ export function AppProvider({ children }) {
     fetchApplicants,
     fetchApplicantDetails,
     allotSeat,
+    updateDocumentStatus,
   };
 
   return (

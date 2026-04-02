@@ -31,7 +31,7 @@ export default function Departments({ campus, onSelect, onBack }) {
       </button>
       <h1 className="text-3xl font-bold mb-4">Departments - {campus.name}</h1>
       <button
-        className="mb-4 px-4 py-2 bg-brand text-white rounded hover:bg-brand-strong"
+        className="mb-4 px-4 py-2 bg-brand text-white rounded-base hover:bg-brand-strong"
         onClick={() => setShowAddModal(true)}
       >
         Add Department
@@ -48,7 +48,7 @@ export default function Departments({ campus, onSelect, onBack }) {
               <input
                 type="text"
                 placeholder="Department Name"
-                className="w-full p-2 border rounded mb-4"
+                className="w-full p-2 border rounded-base mb-4"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -83,7 +83,7 @@ export default function Departments({ campus, onSelect, onBack }) {
             <li
               key={dept._id}
               onClick={() => onSelect(dept)} // 🔥 IMPORTANT
-              className="p-3 border rounded mb-2 cursor-pointer hover:bg-gray-100"
+              className="p-3 border rounded-base mb-2 cursor-pointer hover:bg-gray-100"
             >
               <strong>{dept.name}</strong>
             </li>

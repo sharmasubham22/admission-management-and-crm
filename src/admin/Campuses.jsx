@@ -48,7 +48,7 @@ export default function Campuses({ institution, onSelect, onBack }) {
               <input
                 type="text"
                 placeholder="Campus Name"
-                className="w-full p-2 border rounded mb-4"
+                className="w-full p-2 border rounded-base mb-4"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -83,7 +83,7 @@ export default function Campuses({ institution, onSelect, onBack }) {
             <li
               key={campus._id}
               onClick={() => onSelect(campus)} // 🔥 IMPORTANT
-              className="p-3 border rounded mb-2 cursor-pointer hover:bg-gray-100"
+              className="p-3 border rounded-base mb-2 cursor-pointer hover:bg-gray-100"
             >
               <strong>{campus.name}</strong>
             </li>

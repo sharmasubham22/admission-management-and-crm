@@ -36,7 +36,7 @@ export default function Institutions({ onSelect }) {
         </button>
       </div>
 
-      <div className="space-y-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {institutions.length === 0 ? (
           <p className="text-gray-500">No institutions found</p>
         ) : (
@@ -44,12 +44,12 @@ export default function Institutions({ onSelect }) {
             <button
               key={inst._id}
               onClick={() => onSelect(inst)}
-              className="bg-card block max-w-sm p-6 border border-default rounded-base shadow-xs cursor-pointer hover:shadow-lg transition-shadow text-left"
+              className="bg-card block max-w-sm p-4 border border-default rounded-base shadow-xs cursor-pointer hover:shadow-lg transition-shadow text-left"
             >
               <Landmark className="text-brand" />
-              <span className="py-3 text-2xl font-semibold tracking-tight text-heading">
+              <h1 className="my-2 text-2xl font-semibold tracking-tight text-heading">
                 {inst.name}
-              </span>
+              </h1>
             </button>
           ))
         )}
