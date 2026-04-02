@@ -1,5 +1,6 @@
 import Applicant from "../models/Applicant.js";
 import Quota from "../models/Quota.js";
+import Program from "../models/Program.js";
 import mongoose from "mongoose";
 
 // Applicant Controllers
@@ -172,6 +173,71 @@ export const updateDocStatus = async (req, res) => {
     res.json(applicant);
   } catch (err) {
     console.error("Error updating document status:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const generateAdmissionNumber = async (applicant) => {
+  const program = await Program.findById(applicant.programId).populate({
+    path: "departmentId",
+    populate: {
+      path: "campusId",
+      populate: {
+        path: "institutionId",
+      },
+    },
+  });
+
+  const institutionCode =
+    program.departmentId.campusId.institutionId.code || "INST";
+  const level = program.courseType || "UG";
+  const year = program.academicYear || new Date().getFullYear();
+  const programCode = program.name.toUpperCase();
+  const quota = applicant.quotaType.toUpperCase();
+
+  const count = await Applicant.countDocuments({
+    programId: applicant.programId,
+    quotaType: applicant.quotaType,
+    admissionNumber: { $exists: true },
+  });
+
+  const serial = String(count + 1).padStart(4, "0");
+
+  return `${institutionCode}/${year}/${level}/${programCode}/${quota}/${serial}`;
+};
+
+export const updateFeeStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { feeStatus } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid applicant ID" });
+    }
+
+    const applicant = await Applicant.findByIdAndUpdate(
+      id,
+      { feeStatus },
+      { returnDocument: "after" },
+    );
+
+    if (!applicant) {
+      return res.status(404).json({ message: "Applicant not found" });
+    }
+
+    if (
+      applicant.seatStatus === "Allotted" &&
+      applicant.documentStatus === "verified" &&
+      applicant.feeStatus === "Paid" &&
+      !applicant.admissionNumber
+    ) {
+      const admissionNumber = await generateAdmissionNumber(applicant);
+      applicant.admissionNumber = admissionNumber;
+    }
+    await applicant.save();
+    res.json(applicant);
+  } catch (err) {
+    console.error("Error updating fee status:", err);
     res.status(500).json({ message: err.message });
   }
 };

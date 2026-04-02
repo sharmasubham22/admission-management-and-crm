@@ -87,6 +87,11 @@ const applicantSchema = new mongoose.Schema(
       default: "Unpaid",
     },
 
+    admissionNumber: {
+      type: String,
+      default: "Not generated"
+    },
+
     date: {
       type: String,
       default: Date(),

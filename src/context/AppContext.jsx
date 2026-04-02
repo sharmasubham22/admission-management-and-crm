@@ -10,6 +10,15 @@ export function AppProvider({ children }) {
   const [programs, setPrograms] = useState([]);
   const [quotas, setQuotas] = useState([]);
   const [applicants, setApplicants] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("currentUser");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -168,7 +177,10 @@ export function AppProvider({ children }) {
   const addApplicant = async (data) => {
     try {
       setError(null);
-      await axios.post("http://localhost:3000/api/applicant/add-applicant", data);
+      await axios.post(
+        "http://localhost:3000/api/applicant/add-applicant",
+        data,
+      );
       await fetchApplicants();
       return { success: true };
     } catch (err) {
@@ -183,7 +195,9 @@ export function AppProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get("http://localhost:3000/api/applicant/applicants");
+      const res = await axios.get(
+        "http://localhost:3000/api/applicant/applicants",
+      );
       setApplicants(res.data);
     } catch (err) {
       console.error("Error fetching applicants:", err);
@@ -198,7 +212,9 @@ export function AppProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get(`http://localhost:3000/api/applicant/applicant-details/${id}`);
+      const res = await axios.get(
+        `http://localhost:3000/api/applicant/applicant-details/${id}`,
+      );
       return res.data;
     } catch (err) {
       console.error("Error fetching applicant details:", err);
@@ -213,18 +229,24 @@ export function AppProvider({ children }) {
   const allotSeat = async (applicantId, programId, quotaType) => {
     try {
       setError(null);
-      const res = await axios.post("http://localhost:3000/api/applicant/allot-seat", {
-        applicantId,
-        programId,
-        quotaType,
-      });
+      const res = await axios.post(
+        "http://localhost:3000/api/applicant/allot-seat",
+        {
+          applicantId,
+          programId,
+          quotaType,
+        },
+      );
       await fetchApplicants(); // Refresh applicants list
       await fetchQuotas(); // Refresh quotas
       return { success: true, data: res.data };
     } catch (err) {
       console.error("Error allotting seat:", err);
       setError(err.response?.data?.message || err.message);
-      return { success: false, error: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        error: err.response?.data?.message || err.message,
+      };
     }
   };
 
@@ -232,16 +254,119 @@ export function AppProvider({ children }) {
   const updateDocumentStatus = async (applicantId, documentStatus) => {
     try {
       setError(null);
-      const res = await axios.patch(`http://localhost:3000/api/applicant/update-doc-status/${applicantId}`, {
-        documentStatus,
-      });
+      const res = await axios.patch(
+        `http://localhost:3000/api/applicant/update-doc-status/${applicantId}`,
+        {
+          documentStatus,
+        },
+      );
       await fetchApplicants();
       return { success: true, data: res.data };
     } catch (err) {
       console.error("Error updating document status:", err);
       setError(err.response?.data?.message || err.message);
+      return {
+        success: false,
+        error: err.response?.data?.message || err.message,
+      };
+    }
+  };
+
+  // Update Fee Status
+  const updateFeeStatus = async (applicantId, feeStatus) => {
+    try {
+      setError(null);
+      const res = await axios.patch(
+        `http://localhost:3000/api/applicant/update-fee-status/${applicantId}`,
+        {
+          feeStatus,
+        },
+      );
+      await fetchApplicants();
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("Error updating fee status:", err);
+      setError(err.response?.data?.message || err.message);
+      return {
+        success: false,
+        error: err.response?.data?.message || err.message,
+      };
+    }
+  };
+
+  // Generate Admission Number
+  const generateAdmissionNumber = async (applicantId) => {
+    try {
+      setError(null);
+      const res = await axios.post(
+        `http://localhost:3000/api/applicant/finalize-admission/${applicantId}`,
+      );
+      await fetchApplicants();
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("Error generating admission number:", err);
+      setError(err.response?.data?.message || err.message);
+      return {
+        success: false,
+        error: err.response?.data?.message || err.message,
+      };
+    }
+  };
+
+  // create user
+  const createUser = async (data) => {
+    try {
+      setError(null);
+      await axios.post("http://localhost:3000/api/user/add-user", data);
+      return { success: true };
+    } catch (err) {
+      console.error("Error creating user:", err);
+      setError(err.message);
+      return { success: false, error: err.message };
+    }
+  };
+
+  // login user
+  const loginUser = async ({ email, password }) => {
+    try {
+      setError(null);
+      const res = await axios.post("http://localhost:3000/api/user/login", {
+        email,
+        password,
+      });
+
+      const user = res.data;
+      setCurrentUser(user);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      return { success: true, data: user };
+    } catch (err) {
+      console.error("Error logging in user:", err);
+      setError(err.response?.data?.message || err.message);
       return { success: false, error: err.response?.data?.message || err.message };
     }
+  };
+
+  // fetch users
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.get(
+        "http://localhost:3000/api/user/users",
+      );
+      setUsers(res.data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logoutUser = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("currentUser");
   };
 
   // Load data on mount
@@ -253,6 +378,7 @@ export function AppProvider({ children }) {
     fetchQuotas();
     fetchApplicants();
     fetchApplicantDetails();
+    fetchUsers();
   }, []);
 
   const value = {
@@ -262,6 +388,8 @@ export function AppProvider({ children }) {
     programs,
     quotas,
     applicants,
+    users,
+    currentUser,
     loading,
     error,
     addInstitution,
@@ -277,13 +405,17 @@ export function AppProvider({ children }) {
     fetchQuotas,
     fetchApplicants,
     fetchApplicantDetails,
+    fetchUsers,
     allotSeat,
     updateDocumentStatus,
+    updateFeeStatus,
+    generateAdmissionNumber,
+    createUser,
+    loginUser,
+    logoutUser,
   };
 
   return (
-    <AppContextAPI.Provider value={value}>
-      {children}
-    </AppContextAPI.Provider>
+    <AppContextAPI.Provider value={value}>{children}</AppContextAPI.Provider>
   );
 }

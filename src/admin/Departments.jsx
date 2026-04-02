@@ -1,10 +1,12 @@
 import React, { useState, useContext, useMemo } from "react";
 import { AppContextAPI } from "../context/AppContext";
+import { Network } from "lucide-react";
 
 export default function Departments({ campus, onSelect, onBack }) {
-  const { departments, addDepartment } = useContext(AppContextAPI);
+  const { departments, addDepartment, currentUser } = useContext(AppContextAPI);
   const [showAddModal, setShowAddModal] = useState(false);
   const [name, setName] = useState("");
+  const isManagement = currentUser?.role === "management";
 
   const filteredDepartments = useMemo(() => {
     return departments.filter((d) => d.campusId?._id === campus._id);
@@ -26,16 +28,20 @@ export default function Departments({ campus, onSelect, onBack }) {
 
   return (
     <div>
-      <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded">
+      <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded-base">
         ← Back
       </button>
       <h1 className="text-3xl font-bold mb-4">Departments - {campus.name}</h1>
-      <button
-        className="mb-4 px-4 py-2 bg-brand text-white rounded-base hover:bg-brand-strong"
-        onClick={() => setShowAddModal(true)}
-      >
-        Add Department
-      </button>
+      {isManagement ? (
+        <></>
+      ) : (
+        <button
+          className="mb-4 px-4 py-2 bg-brand text-white rounded-base hover:bg-brand-strong"
+          onClick={() => setShowAddModal(true)}
+        >
+          Add Department
+        </button>
+      )}
 
       {showAddModal && (
         <div className="fixed inset-0 bg-background/70 flex items-center justify-center">
@@ -48,7 +54,7 @@ export default function Departments({ campus, onSelect, onBack }) {
               <input
                 type="text"
                 placeholder="Department Name"
-                className="w-full p-2 border rounded-base mb-4"
+                className="w-full p-2 border border-border rounded-base mb-4"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -58,14 +64,14 @@ export default function Departments({ campus, onSelect, onBack }) {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-gray-300 rounded"
+                  className="px-4 py-2 bg-gray-200 rounded-base"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-brand text-white rounded"
+                  className="px-4 py-2 bg-brand text-white rounded-base"
                 >
                   Add
                 </button>
@@ -83,8 +89,9 @@ export default function Departments({ campus, onSelect, onBack }) {
             <li
               key={dept._id}
               onClick={() => onSelect(dept)} // 🔥 IMPORTANT
-              className="p-3 border rounded-base mb-2 cursor-pointer hover:bg-gray-100"
+              className="p-3 flex gap-3 border border-border rounded-base mb-2 cursor-pointer hover:bg-card"
             >
+              <Network className="text-brand" />
               <strong>{dept.name}</strong>
             </li>
           ))
