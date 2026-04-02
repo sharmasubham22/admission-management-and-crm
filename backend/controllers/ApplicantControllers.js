@@ -1,5 +1,6 @@
 import Applicant from "../models/Applicant.js";
 import Quota from "../models/Quota.js";
+import mongoose from "mongoose";
 
 // Applicant Controllers
 export const createApplicant = async (req, res) => {
@@ -13,7 +14,18 @@ export const createApplicant = async (req, res) => {
 
 export const getApplicants = async (req, res) => {
   try {
-    const applicants = await Applicant.find();
+    const applicants = await Applicant.find().populate({
+      path: "programId",
+      populate: {
+        path: "departmentId",
+        populate: {
+          path: "campusId",
+          populate: {
+            path: "institutionId",
+          },
+        },
+      },
+    });
     res.json(applicants);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -21,8 +33,30 @@ export const getApplicants = async (req, res) => {
 };
 
 export const getApplicantById = async (req, res) => {
-  const applicant = await Applicant.findById(req.params.id);
-  res.json(applicant);
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid applicant ID" });
+    }
+    const applicant = await Applicant.findById(id).populate({
+      path: "programId",
+      populate: {
+        path: "departmentId",
+        populate: {
+          path: "campusId",
+          populate: {
+            path: "institutionId",
+          },
+        },
+      },
+    });
+    if (!applicant) {
+      return res.status(404).json({ message: "Applicant not found" });
+    }
+    res.json(applicant);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 export const allotSeat = async (req, res) => {
@@ -31,21 +65,31 @@ export const allotSeat = async (req, res) => {
 
     if (!applicantId || !programId || !quotaType) {
       return res.status(400).json({
-        message: "Applicant ID, Program ID, and Quota Type are required"
+        message: "Applicant ID, Program ID, and Quota Type are required",
       });
     }
 
-    const validQuotaTypes = ['kcet', 'comedk', 'management'];
+    if (!mongoose.Types.ObjectId.isValid(applicantId)) {
+      return res.status(400).json({ message: "Invalid applicant ID" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(programId)) {
+      return res.status(400).json({ message: "Invalid program ID" });
+    }
+
+    const validQuotaTypes = ["kcet", "comedk", "management"];
     if (!validQuotaTypes.includes(quotaType.toLowerCase())) {
       return res.status(400).json({
-        message: "Invalid quota type. Must be kcet, comedk, or management"
+        message: "Invalid quota type. Must be kcet, comedk, or management",
       });
     }
 
     const quota = await Quota.findOne({ programId });
 
     if (!quota) {
-      return res.status(404).json({ message: "Quota not found for this program" });
+      return res
+        .status(404)
+        .json({ message: "Quota not found for this program" });
     }
 
     const applicant = await Applicant.findById(applicantId);
@@ -60,7 +104,8 @@ export const allotSeat = async (req, res) => {
     }
 
     const totalField = quotaType.toLowerCase();
-    const filledField = "filled" + quotaType.charAt(0).toUpperCase() + quotaType.slice(1);
+    const filledField =
+      "filled" + quotaType.charAt(0).toUpperCase() + quotaType.slice(1);
 
     const totalSeats = quota[totalField] || 0;
     const filledSeats = quota[filledField] || 0;
@@ -90,17 +135,43 @@ export const allotSeat = async (req, res) => {
         name: applicant.name,
         seatStatus: applicant.seatStatus,
         programId: applicant.programId,
-        quotaType: applicant.quotaType
+        quotaType: applicant.quotaType,
       },
       quota: {
         _id: quota._id,
         programId: quota.programId,
         filledSeats: quota.filledSeats,
-        [filledField]: quota[filledField]
-      }
+        [filledField]: quota[filledField],
+      },
     });
   } catch (err) {
     console.error("Seat allot error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const updateDocStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { documentStatus } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid applicant ID" });
+    }
+
+    const applicant = await Applicant.findByIdAndUpdate(
+      id,
+      { documentStatus },
+      { returnDocument: "after" },
+    );
+
+    if (!applicant) {
+      return res.status(404).json({ message: "Applicant not found" });
+    }
+
+    res.json(applicant);
+  } catch (err) {
+    console.error("Error updating document status:", err);
     res.status(500).json({ message: err.message });
   }
 };

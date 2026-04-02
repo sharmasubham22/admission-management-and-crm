@@ -13,6 +13,7 @@ export default function AddApplicant() {
     const [category, setCategory] = useState("");
     const [entryType, setEntryType] = useState("");
     const [marks, setMarks] = useState("");
+    const [allotmentNumber, setAllotmentNumber] = useState("");
     const [documentStatus, setDocumentStatus] = useState("Pending");
     const [seatStatus, setSeatStatus] = useState("Not Allotted");
     const [feeStatus, setFeeStatus] = useState("Unpaid");
@@ -31,6 +32,7 @@ export default function AddApplicant() {
             category,
             entryType,
             marks: Number(marks),
+            allotmentNumber: allotmentNumber || null,
             documentStatus,
             seatStatus,
             feeStatus,
@@ -45,6 +47,7 @@ export default function AddApplicant() {
             setCategory("");
             setEntryType("");
             setMarks("");
+            setAllotmentNumber("");
             
         }
     };
@@ -174,8 +177,8 @@ export default function AddApplicant() {
               required
             >
               <option value="">Select entry type</option>
-              <option value="Regular">Regular</option>
-              <option value="Lateral">Lateral</option>
+              <option value="Government">Government</option>
+              <option value="Management">Management</option>
             </select>
           </div>
           <div>
@@ -196,6 +199,25 @@ export default function AddApplicant() {
             />
           </div>
         </div>
+        {entryType === "Government" && (
+          <div className='mb-6'>
+            <label
+              htmlFor="allotment number"
+              className="block mb-2.5 text-sm font-medium text-heading"
+            >
+              Allotment Number
+            </label>
+            <input
+              type="text"
+              id="allotment number"
+              value={allotmentNumber}
+              onChange={(e) => setAllotmentNumber(e.target.value)}
+              className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+              placeholder="Enter allotment number"
+              required
+            />
+          </div>
+        )}
         <div className="mb-6">
           <label
             className="block mb-2.5 text-sm font-medium text-heading"
@@ -241,7 +263,7 @@ export default function AddApplicant() {
           </button>
           <button
             type="button"
-            onClick={() => nav('/')}
+            onClick={() => nav("/")}
             className="px-3 py-2.5 bg-gray-200 rounded-base ml-3 text-sm font-medium shadow-xs"
           >
             Back

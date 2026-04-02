@@ -40,7 +40,7 @@ export default function AdminPanel() {
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
         <div className="h-full px-3 py-4 bg-card border-e border-border">
-          <h2 className="text-xl font-bold mb-5">Edumerge</h2>
+          <a href="/" className="text-xl font-bold mb-5">Edumerge</a>
 
           <ul className="space-y-2 text-lg">
             {/* Dashboard */}
@@ -70,7 +70,7 @@ export default function AdminPanel() {
                   resetHierarchy();
                   setSidebarOpen(false);
                 }}
-                className={`flex items-center w-full px-2 py-2 rounded ${
+                className={`flex items-center w-full px-2 py-2 rounded-base ${
                   view === "institutions"
                     ? "bg-brand hover:bg-brand-strong cursor-pointer text-white"
                     : "hover:bg-brand-softer cursor-pointer hover:text-white"
@@ -89,7 +89,7 @@ export default function AdminPanel() {
                   resetHierarchy();
                   setSidebarOpen(false);
                 }}
-                className={`flex items-center w-full px-2 py-2 rounded ${
+                className={`flex items-center w-full px-2 py-2 rounded-base ${
                   view === "applicants"
                     ? "bg-brand hover:bg-brand-strong cursor-pointer text-white"
                     : "hover:bg-brand-softer cursor-pointer hover:text-white"

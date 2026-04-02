@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AppContextAPI } from "../context/AppContext";
 
 export default function SeatAllot({ applicant, onClose }) {
-  const { institutions, campuses, departments, programs, quotas, allotSeat } =
-    useContext(AppContextAPI);
+  const { institutions, campuses, departments, programs, quotas, allotSeat } = useContext(AppContextAPI);
 
   const [institutionId, setInstitutionId] = useState("");
   const [campusId, setCampusId] = useState("");
@@ -14,7 +13,17 @@ export default function SeatAllot({ applicant, onClose }) {
   const filteredCampuses = campuses.filter((c) => c.institutionId?._id === institutionId,);
   const filteredDepartments = departments.filter((d) => d.campusId?._id === campusId,);
   const filteredPrograms = programs.filter((p) => p.departmentId?._id === departmentId,);
-  const selectedQuota = quotas.find((q) => q.programId?._id === programId);
+  const selectedQuota = quotas.find(
+    (q) => q.programId?._id === programId || q.programId === programId,
+  );
+
+  const isGovernment = applicant.entryType === "Government";
+
+  useEffect(() => {
+    if (!isGovernment && programId) {
+      setQuotaType("management");
+    }
+  }, [isGovernment, programId]);
 
   const handleInstitutionChange = (id) => {
     setInstitutionId(id);
@@ -56,14 +65,15 @@ export default function SeatAllot({ applicant, onClose }) {
     };
   };
 
+  const quotaStats = getQuotaStats(selectedQuota, quotaType);
+  const availableSeats = quotaStats.available;
+
   const handleAllotSeat = async () => {
     if (!applicant || !programId || !quotaType) return;
-
     if (availableSeats <= 0) {
       alert("No seats available in this quota!");
       return;
     }
-
     const result = await allotSeat(applicant._id, programId, quotaType);
     if (result.success) {
       alert("Seat allotted successfully!");
@@ -136,7 +146,7 @@ export default function SeatAllot({ applicant, onClose }) {
           </select>
         )}
 
-        {programId && (
+        {programId && isGovernment && (
           <select
             value={quotaType}
             onChange={(e) => setQuotaType(e.target.value)}
@@ -145,16 +155,23 @@ export default function SeatAllot({ applicant, onClose }) {
             <option value="">Select Quota Type</option>
             <option value="kcet">KCET</option>
             <option value="comedk">COMEDK</option>
-            <option value="management">Management</option>
           </select>
+        )}
+
+        {programId && !isGovernment && (
+          <div className="mb-3 text-sm font-medium text-gray-700">
+            Quota Type: <strong>Management</strong>
+          </div>
         )}
 
         {quotaType && selectedQuota && (
           <div className="mb-3 text-sm">
             <div
-              className={`font-semibold ${(selectedQuota[quotaType] || 0) - (selectedQuota[`filled${quotaType.charAt(0).toUpperCase() + quotaType.slice(1)}`] || 0) > 0 ? "text-green-600" : "text-red-600"}`}
+              className={`font-semibold ${
+                availableSeats > 0 ? "text-green-600" : "text-red-600"
+              }`}
             >
-              Available Seats: {getQuotaStats(selectedQuota, quotaType).available}
+              Available Seats: <strong>{availableSeats}</strong>
             </div>
           </div>
         )}
@@ -163,7 +180,6 @@ export default function SeatAllot({ applicant, onClose }) {
           <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
             Cancel
           </button>
-
           <button
             onClick={handleAllotSeat}
             disabled={!quotaType || availableSeats <= 0}
