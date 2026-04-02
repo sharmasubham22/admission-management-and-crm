@@ -5,13 +5,13 @@ dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
 
+let isConnected = false;
+
 const connectToMongo = async () => {
-  try {
-    await mongoose.connect(mongoURI);
-    console.log("Connected to Database");
-  } catch (err) {
-    console.error("Error connecting to MongoDB:", err);
-  }
+  if (isConnected) return;
+  const db = await mongoose.connect(mongoURI);
+  isConnected = db.connections[0].readyState;
+  console.log("Connected to Database")
 };
 
 export default connectToMongo;
