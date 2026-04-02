@@ -22,12 +22,14 @@ export function AppProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const hostedLink = "https://admission-management-and-crm-nu.vercel.app/";
+
   // Add Institution
   const addInstitution = async (data) => {
     try {
       setError(null);
       await axios.post(
-        "http://localhost:3000/api/admin/add-institutions",
+        `${hostedLink}api/admin/add-institutions`,
         data,
       );
       await fetchInstitutions();
@@ -45,7 +47,7 @@ export function AppProvider({ children }) {
       setLoading(true);
       setError(null);
       const res = await axios.get(
-        "http://localhost:3000/api/admin/institutions",
+        `${hostedLink}api/admin/institutions`,
       );
       setInstitutions(res.data);
     } catch (err) {
@@ -60,7 +62,7 @@ export function AppProvider({ children }) {
   const addCampus = async (data) => {
     try {
       setError(null);
-      await axios.post("http://localhost:3000/api/admin/add-campus", data);
+      await axios.post(`${hostedLink}api/admin/add-campus`, data);
       await fetchCampuses();
       return { success: true };
     } catch (err) {
@@ -75,7 +77,7 @@ export function AppProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get("http://localhost:3000/api/admin/campuses");
+      const res = await axios.get(`${hostedLink}api/admin/campuses`);
       setCampuses(res.data);
     } catch (err) {
       console.error("Error fetching campuses:", err);
@@ -89,7 +91,7 @@ export function AppProvider({ children }) {
   const addDepartment = async (data) => {
     try {
       setError(null);
-      await axios.post("http://localhost:3000/api/admin/add-department", data);
+      await axios.post(`${hostedLink}api/admin/add-department`, data);
       await fetchDepartments();
       return { success: true };
     } catch (err) {
@@ -105,7 +107,7 @@ export function AppProvider({ children }) {
       setLoading(true);
       setError(null);
       const res = await axios.get(
-        "http://localhost:3000/api/admin/departments",
+        `${hostedLink}api/admin/departments`,
       );
       setDepartments(res.data);
     } catch (err) {
@@ -120,7 +122,7 @@ export function AppProvider({ children }) {
   const addProgram = async (data) => {
     try {
       setError(null);
-      await axios.post("http://localhost:3000/api/admin/add-program", data);
+      await axios.post(`${hostedLink}api/admin/add-program`, data);
       return { success: true };
     } catch (err) {
       console.error("Error adding program:", err);
@@ -134,7 +136,7 @@ export function AppProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get("http://localhost:3000/api/admin/programs");
+      const res = await axios.get(`${hostedLink}api/admin/programs`);
       setPrograms(res.data);
     } catch (err) {
       console.error("Error fetching programs:", err);
@@ -148,7 +150,7 @@ export function AppProvider({ children }) {
   const addQuota = async (data) => {
     try {
       setError(null);
-      await axios.post("http://localhost:3000/api/admin/add-quota", data);
+      await axios.post(`${hostedLink}api/admin/add-quota`, data);
       await fetchQuotas();
       return { success: true };
     } catch (err) {
@@ -163,7 +165,7 @@ export function AppProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axios.get("http://localhost:3000/api/admin/quotas");
+      const res = await axios.get(`${hostedLink}api/admin/quotas`);
       setQuotas(res.data);
     } catch (err) {
       console.error("Error fetching quotas:", err);
@@ -178,7 +180,7 @@ export function AppProvider({ children }) {
     try {
       setError(null);
       await axios.post(
-        "http://localhost:3000/api/applicant/add-applicant",
+        `${hostedLink}api/applicant/add-applicant`,
         data,
       );
       await fetchApplicants();
@@ -196,7 +198,7 @@ export function AppProvider({ children }) {
       setLoading(true);
       setError(null);
       const res = await axios.get(
-        "http://localhost:3000/api/applicant/applicants",
+        `${hostedLink}api/applicant/applicants`,
       );
       setApplicants(res.data);
     } catch (err) {
@@ -213,7 +215,7 @@ export function AppProvider({ children }) {
       setLoading(true);
       setError(null);
       const res = await axios.get(
-        `http://localhost:3000/api/applicant/applicant-details/${id}`,
+        `${hostedLink}api/applicant/applicant-details/${id}`,
       );
       return res.data;
     } catch (err) {
@@ -230,7 +232,7 @@ export function AppProvider({ children }) {
     try {
       setError(null);
       const res = await axios.post(
-        "http://localhost:3000/api/applicant/allot-seat",
+        `${hostedLink}api/applicant/allot-seat`,
         {
           applicantId,
           programId,
@@ -255,7 +257,7 @@ export function AppProvider({ children }) {
     try {
       setError(null);
       const res = await axios.patch(
-        `http://localhost:3000/api/applicant/update-doc-status/${applicantId}`,
+        `${hostedLink}api/applicant/update-doc-status/${applicantId}`,
         {
           documentStatus,
         },
@@ -277,7 +279,7 @@ export function AppProvider({ children }) {
     try {
       setError(null);
       const res = await axios.patch(
-        `http://localhost:3000/api/applicant/update-fee-status/${applicantId}`,
+        `${hostedLink}api/applicant/update-fee-status/${applicantId}`,
         {
           feeStatus,
         },
@@ -299,7 +301,7 @@ export function AppProvider({ children }) {
     try {
       setError(null);
       const res = await axios.post(
-        `http://localhost:3000/api/applicant/finalize-admission/${applicantId}`,
+        `${hostedLink}api/applicant/finalize-admission/${applicantId}`,
       );
       await fetchApplicants();
       return { success: true, data: res.data };
@@ -317,7 +319,7 @@ export function AppProvider({ children }) {
   const createUser = async (data) => {
     try {
       setError(null);
-      await axios.post("http://localhost:3000/api/user/add-user", data);
+      await axios.post(`${hostedLink}api/user/add-user`, data);
       return { success: true };
     } catch (err) {
       console.error("Error creating user:", err);
@@ -330,7 +332,7 @@ export function AppProvider({ children }) {
   const loginUser = async ({ email, password }) => {
     try {
       setError(null);
-      const res = await axios.post("http://localhost:3000/api/user/login", {
+      const res = await axios.post(`${hostedLink}api/user/login`, {
         email,
         password,
       });
@@ -353,7 +355,7 @@ export function AppProvider({ children }) {
       setLoading(true);
       setError(null);
       const res = await axios.get(
-        "http://localhost:3000/api/user/users",
+        `${hostedLink}api/user/users`,
       );
       setUsers(res.data);
     } catch (err) {
