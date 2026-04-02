@@ -5,11 +5,13 @@ import user from "./routes/user.routes.js";
 import cors from "cors";
 import connectToMongo from "./db.js";
 
-connectToMongo();
-
 const app = express();
 const port = process.env.PORT;
 
+app.use(async (req, res, next) => {
+  await connectToMongo();
+  next();
+});
 app.use(express.json());
 app.use(cors());
 app.use("/api/admin", admin);
