@@ -93,7 +93,20 @@ export const createQuota = async (req, res) => {
 
 export const getQuotas = async (req, res) => {
   try {
-    const quotas = await Quota.find().populate('programId');
+    const quotas = await Quota.find()
+      .populate("programId")
+      .populate({
+        path: "programId",
+        populate: {
+          path: "departmentId",
+          populate: {
+            path: "campusId",
+            populate: {
+              path: "institutionId",
+            },
+          },
+        },
+      });
     res.json(quotas);
   } catch (err) {
     res.status(500).json({ message: err.message });

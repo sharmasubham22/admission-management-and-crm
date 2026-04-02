@@ -3,8 +3,9 @@ import { Landmark } from "lucide-react";
 import { AppContextAPI } from "../context/AppContext";
 
 export default function Institutions({ onSelect }) {
-  const { institutions, loading, addInstitution } = useContext(AppContextAPI);
+  const { institutions, loading, addInstitution, currentUser } = useContext(AppContextAPI);
   const [name, setName] = useState("");
+  const isManagement = currentUser?.role === "management";
 
   const handleAddInstitution = async (e) => {
      e.preventDefault();
@@ -16,24 +17,28 @@ export default function Institutions({ onSelect }) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Institutions</h1>
-
       <div className="flex gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="Enter institution name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border border-border px-3 py-2 rounded-base"
-        />
+        {isManagement ? (
+          <></>
+        ) : (
+          <>
+            <input
+              type="text"
+              placeholder="Enter institution name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border border-border px-3 py-2 rounded-base"
+            />
 
-        <button
-          onClick={handleAddInstitution}
-          disabled={loading}
-          className="bg-brand hover:bg-brand-strong cursor-pointer text-white px-4 py-2 rounded-base"
-        >
-          {loading ? "Adding..." : "Add"}
-        </button>
+            <button
+              onClick={handleAddInstitution}
+              disabled={loading}
+              className="bg-brand hover:bg-brand-strong cursor-pointer text-white px-4 py-2 rounded-base"
+            >
+              {loading ? "Adding..." : "Add"}
+            </button>
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

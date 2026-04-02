@@ -1,10 +1,12 @@
 import React, { useContext, useState, useMemo } from "react";
 import { AppContextAPI } from "../context/AppContext";
+import { ShieldCog } from "lucide-react";
 
 export default function Programs({ department, onSelect, onBack }) {
-  const { programs, addProgram } = useContext(AppContextAPI);
+  const { programs, addProgram, currentUser } = useContext(AppContextAPI);
 
   const [showAddModal, setShowAddModal] = useState(false);
+  const isManagement = currentUser?.role === "management";
 
   const [name, setName] = useState("");
   const [intake, setIntake] = useState("");
@@ -40,20 +42,27 @@ export default function Programs({ department, onSelect, onBack }) {
 
   return (
     <div>
-      <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded">
+      <button
+        onClick={onBack}
+        className="mb-4 px-3 py-1 bg-gray-200 rounded-base"
+      >
         ← Back
       </button>
       <h1 className="text-3xl font-bold mb-4">Programs - {department.name}</h1>
-      <button
-        className="mb-4 px-4 py-2 bg-brand text-white rounded-base hover:bg-brand-strong"
-        onClick={() => setShowAddModal(true)}
-      >
-        Add Program
-      </button>
+      {isManagement ? (
+        <></>
+      ) : (
+        <button
+          className="mb-4 px-4 py-2 bg-brand text-white rounded-base hover:bg-brand-strong"
+          onClick={() => setShowAddModal(true)}
+        >
+          Add Program
+        </button>
+      )}
 
       {showAddModal && (
         <div className="fixed inset-0 bg-background/70 flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-lg w-full max-w-md p-6">
+          <div className="bg-card border border-border rounded-base w-full max-w-md p-6">
             <h2 className="text-xl font-bold mb-4">
               Add Program to {department.name}
             </h2>
@@ -62,7 +71,7 @@ export default function Programs({ department, onSelect, onBack }) {
               <input
                 type="text"
                 placeholder="Program Name"
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -71,14 +80,14 @@ export default function Programs({ department, onSelect, onBack }) {
               <input
                 type="number"
                 placeholder="Intake"
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={intake}
                 onChange={(e) => setIntake(e.target.value)}
                 required
               />
 
               <select
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={academicYear}
                 onChange={(e) => setAcademicYear(e.target.value)}
                 required
@@ -90,7 +99,7 @@ export default function Programs({ department, onSelect, onBack }) {
               </select>
 
               <select
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={courseType}
                 onChange={(e) => setCourseType(e.target.value)}
                 required
@@ -101,7 +110,7 @@ export default function Programs({ department, onSelect, onBack }) {
               </select>
 
               <select
-                className="w-full p-2 border rounded-base mb-4"
+                className="w-full p-2 border border-border rounded-base mb-4"
                 value={entryType}
                 onChange={(e) => setEntryType(e.target.value)}
                 required
@@ -115,14 +124,14 @@ export default function Programs({ department, onSelect, onBack }) {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-gray-300 rounded"
+                  className="px-4 py-2 bg-gray-200 rounded-base"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-brand text-white rounded"
+                  className="px-4 py-2 bg-brand text-white rounded-base"
                 >
                   Add
                 </button>
@@ -139,10 +148,13 @@ export default function Programs({ department, onSelect, onBack }) {
           filteredPrograms.map((program) => (
             <li
               key={program._id}
-              onClick={() => onSelect(program)} // 🔥 IMPORTANT
-              className="p-3 border rounded-base mb-2 cursor-pointer hover:bg-gray-100"
+              onClick={() => onSelect(program)}
+              className="p-3 flex gap-3 items-center border border-border rounded-base mb-2 cursor-pointer hover:bg-card"
             >
-              <strong>{program.name}</strong> | Intake: {program.intake}
+              <ShieldCog className="text-brand" />
+              <strong>{program.name}</strong> Intake: {program.intake} |
+              Academic Year: {program.academicYear} | Course Type:{" "}
+              {program.courseType}
             </li>
           ))
         )}

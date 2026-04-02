@@ -177,13 +177,13 @@ export default function SeatAllot({ applicant, onClose }) {
         )}
 
         <div className="flex justify-end gap-2 mt-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded-base cursor-pointer">
             Cancel
           </button>
           <button
             onClick={handleAllotSeat}
             disabled={!quotaType || availableSeats <= 0}
-            className="px-4 py-2 bg-brand text-white rounded-base disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-brand text-white rounded-base cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Confirm Allotment
           </button>

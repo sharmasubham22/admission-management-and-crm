@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AddApplicant() {
     const { addApplicant } = useContext(AppContextAPI);
+    
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [contact, setContact] = useState("");
@@ -32,12 +33,13 @@ export default function AddApplicant() {
             category,
             entryType,
             marks: Number(marks),
-            allotmentNumber: allotmentNumber || null,
+            allotmentNumber,
             documentStatus,
             seatStatus,
             feeStatus,
         });
         if (result.success) {
+            alert("Applicant added Successfully!")
             setName("");
             setEmail("");
             setContact("");
@@ -48,7 +50,8 @@ export default function AddApplicant() {
             setEntryType("");
             setMarks("");
             setAllotmentNumber("");
-            
+        } else {
+            alert("Adding applicant failed: " + result.error);
         }
     };
   return (
@@ -263,7 +266,7 @@ export default function AddApplicant() {
           </button>
           <button
             type="button"
-            onClick={() => nav("/")}
+            onClick={() => nav("/admission-home")}
             className="px-3 py-2.5 bg-gray-200 rounded-base ml-3 text-sm font-medium shadow-xs"
           >
             Back

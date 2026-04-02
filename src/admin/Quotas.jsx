@@ -1,8 +1,10 @@
 import React, { useContext, useState, useMemo } from "react";
 import { AppContextAPI } from "../context/AppContext";
+import { ChartPie } from "lucide-react";
 
 export default function Quotas({ program, onBack }) {
-  const { quotas, addQuota } = useContext(AppContextAPI);
+  const { quotas, addQuota, currentUser } = useContext(AppContextAPI);
+  const isManagement = currentUser?.role === "management";
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [kcet, setKcet] = useState("");
@@ -53,13 +55,21 @@ export default function Quotas({ program, onBack }) {
 
   return (
     <div>
-      <button onClick={onBack} className="mb-4 px-3 py-1 bg-gray-200 rounded-base">
+      <button
+        onClick={onBack}
+        className="mb-4 px-3 py-1 bg-gray-200 rounded-base"
+      >
         ← Back
       </button>
       <h1 className="text-3xl font-bold mb-4">Quotas - {program.name}</h1>
 
+      {isManagement && (
+        <></>
+      )}
+
       {quotaExists && (
-        <div className="mb-4 p-4 border rounded-base bg-gray-100">
+        <div className="mb-4 p-4 border border-border rounded-base bg-card">
+          <ChartPie className="text-brand mb-3" />
           <h2 className="font-semibold mb-2">Existing Quota</h2>
           <p>
             <strong>KCET:</strong> {programQuotas[0].kcet}
@@ -75,11 +85,11 @@ export default function Quotas({ program, onBack }) {
 
       <button
         onClick={() => setShowAddModal(true)}
-        disabled={quotaExists}
+        disabled={quotaExists || isManagement}
         className={`mb-4 px-4 py-2 rounded-base text-white 
           ${
-            quotaExists
-              ? "bg-gray-400 cursor-not-allowed"
+            quotaExists || isManagement
+              ? "bg-brand opacity-50 cursor-not-allowed"
               : "bg-brand hover:bg-brand-strong"
           }
         `}
@@ -87,10 +97,9 @@ export default function Quotas({ program, onBack }) {
         {quotaExists ? "Quota Already Added" : "Add Quota"}
       </button>
 
-      {/* Modal */}
-      {showAddModal && (
+      {showAddModal && !isManagement && (
         <div className="fixed inset-0 bg-background/70 flex items-center justify-center">
-          <div className="bg-card border rounded-lg w-full max-w-md p-6">
+          <div className="bg-card border border-border rounded-lg w-full max-w-md p-6">
             <h2 className="text-xl font-bold mb-4">
               Add Quotas for {program.name}
             </h2>
@@ -103,7 +112,7 @@ export default function Quotas({ program, onBack }) {
               <input
                 type="number"
                 placeholder="KCET"
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={kcet}
                 onChange={(e) => setKcet(e.target.value)}
                 required
@@ -112,7 +121,7 @@ export default function Quotas({ program, onBack }) {
               <input
                 type="number"
                 placeholder="COMEDK"
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={comedk}
                 onChange={(e) => setComedk(e.target.value)}
                 required
@@ -121,28 +130,25 @@ export default function Quotas({ program, onBack }) {
               <input
                 type="number"
                 placeholder="Management"
-                className="w-full p-2 border rounded-base mb-3"
+                className="w-full p-2 border border-border rounded-base mb-3"
                 value={management}
                 onChange={(e) => setManagement(e.target.value)}
                 required
               />
 
-              {/* Validation */}
               <p
                 className={`mb-3 ${
                   isValid ? "text-green-600" : "text-red-600"
                 }`}
               >
-                {isValid
-                  ? "Quota matches intake ✅"
-                  : "Quota must equal intake ❌"}
+                {isValid ? "Quota matches intake" : "Quota must equal intake"}
               </p>
 
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-gray-300 rounded"
+                  className="px-4 py-2 bg-gray-200 rounded-base"
                 >
                   Cancel
                 </button>
@@ -160,12 +166,11 @@ export default function Quotas({ program, onBack }) {
         </div>
       )}
 
-      {/* 📋 List */}
       <ul>
         {programQuotas.length === 0 ? (
           <p className="text-gray-500">No quotas found</p>
         ) : (
-          ''
+          ""
         )}
       </ul>
     </div>
