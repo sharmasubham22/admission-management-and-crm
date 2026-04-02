@@ -179,16 +179,19 @@ export function AppProvider({ children }) {
   const addApplicant = async (data) => {
     try {
       setError(null);
-      await axios.post(
-        `${hostedLink}api/applicant/add-applicant`,
-        data,
-      );
-      await fetchApplicants();
+      await axios.post(`${hostedLink}api/applicant/add-applicant`, data);
+      try {
+        await fetchApplicants();
+      } catch (fetchErr) {
+        console.warn("Applicant added, but refresh failed:", fetchErr);
+      }
       return { success: true };
     } catch (err) {
-      console.error("Error adding applicant:", err);
-      setError(err.message);
-      return { success: false, error: err.message };
+      const errorMessage =
+        err?.response?.data?.message || err?.message || "Unknown error";
+      console.error("Error adding applicant:", errorMessage);
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
 

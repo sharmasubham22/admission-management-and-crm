@@ -60,7 +60,7 @@ export default function ApplicantDetails() {
     const deptName = applicantData.programId?.departmentId?.name;
     const campusName = applicantData.programId?.departmentId?.campusId?.name;
     const institutionName = applicantData.programId?.departmentId?.campusId?.institutionId?.name;
-
+    const seatsStatus = applicantData.seatStatus?.toLowerCase();
     const docStatus = applicantData.documentStatus?.toLowerCase();
     const feeStatus = applicantData.feeStatus?.toLowerCase();
 
@@ -250,7 +250,7 @@ export default function ApplicantDetails() {
           disabled={applicantData.seatStatus === "Allotted"}
           className="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {applicantData.seatStatus === "Allotted"
+          {seatsStatus === "Allotted"
             ? "Seat Allotted"
             : "Allot Seat"}
         </button>
